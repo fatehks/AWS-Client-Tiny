@@ -1,0 +1,8 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+lib/AWS/Client/Tiny.pm
+t/00_module.t
+t/01_network.t
+t/02_aws.t
