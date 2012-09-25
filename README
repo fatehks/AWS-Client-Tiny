@@ -1,0 +1,48 @@
+AWS-Tiny version 0.04
+=====================
+
+Perl module to run query commands on your AWS account.
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+To run tests for networking,
+
+   env NETWORK_TESTS=1 make test
+
+To run tests using an aws account
+
+   # Create a file, $HOME/.ec2/aws-keys, with contents
+   #
+   #   AWSAccessKeyId=YOUR_ACCESS_KEY_ID
+   #   AWSSecretKey=YOUR_SECRET_KEY
+   #
+   # then run the network tests
+
+   env NETWORK_TESTS=1 make test
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+LWP::UserAgent
+URI::Escape qw(uri_escape_utf8)
+Digest::SHA qw (hmac_sha1_base64 hmac_sha256_base64)
+
+
+COPYRIGHT AND LICENCE
+
+Put the correct copyright and licence information here.
+
+Copyright (C) 2012 by David Hisel
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.10.1 or,
+at your option, any later version of Perl 5 you may have available.
+
+
