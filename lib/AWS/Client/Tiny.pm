@@ -165,10 +165,7 @@ sub sign {
 		$self->{'AWSAccessSecret'})  ."=";
 }
 
-=head3 calculate_string_to_sign_v2($hashref_parameters)
-
-See the amazon doc for how the params should be prepared,
-http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/using-query-api.html
+=head3 add_required_parameters($hashref_parameters)
 
 =cut
 
