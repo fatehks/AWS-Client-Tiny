@@ -1,4 +1,4 @@
-AWS-Tiny version 0.04
+AWS-Client-Tiny version 0.04
 =====================
 
 Perl module to run query commands on your AWS account.
