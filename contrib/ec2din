@@ -1,0 +1,89 @@
+#!/usr/bin/perl   -- #-*-Perl-*-
+
+=head1 NAME
+
+ec2din - example script to show how to run DescribeInstances with filters
+
+=head1 DESCRIPTION
+
+This is an example of how to use AWS::Client::Tiny.
+
+Some useful AWS documentation:
+
+http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/Welcome.html
+
+=cut
+
+use strict;
+use warnings;
+
+use lib qw(../lib);
+use IO::File;
+
+use AWS::Client::Tiny;
+use XML::XPath;
+use XML::XPath::XMLParser;
+
+use XML::Simple;
+use Data::Dumper;
+
+=head3 load_config($filename)
+
+Config file format is expected to be in this format,
+
+  AWSAccessKeyId=YOUR_ACCESS_KEY_ID
+  AWSSecretKey=YOUR_SECRET_KEY
+
+=cut
+
+sub load_config {
+	my $file = shift;
+	my $fh = new IO::File $file, "r";
+	warn "Warning, file not read, $file, returning empty list." unless $fh;
+	return () unless $fh;
+	my @config;
+	foreach (<$fh>) {
+		next if /^\s*#/ || /^\s*$/;
+		push @config, map {	s/^\s+//;s/\s+$//;$_ } split('=',$_,2);
+	}
+	return @config;
+}
+
+# See load_config() for notes on file format
+our $aws_file = $ENV{'HOME'}."/.ec2/aws-keys";
+our %aws_conf = load_config($aws_file);
+
+my $aws = new AWS::Client::Tiny($aws_conf{'AWSAccessKeyId'}, $aws_conf{'AWSSecretKey'});
+
+my $response = $aws->ec2(
+	'Action' => 'DescribeInstances',
+	'Filter.1.Name' => 'instance-state-name',
+	'Filter.1.Value' => 'running',
+);
+
+if (!$response->is_success) {
+	die $response->code.": ".$response->content;
+}
+
+my $xp = XML::XPath->new('xml' => $response->content);
+    
+my $nodeset = $xp->find('//instanceType');
+    
+our $stats = {};
+foreach my $node ($nodeset->get_nodelist) {
+	#print XML::XPath::XMLParser::as_string($node), $/;
+	my $text = $node->string_value();
+	$stats->{$text} += 1;
+	$stats->{'total'} += 1;
+}
+
+#print Dumper($stats),$/;
+foreach my $type (keys %$stats) {
+	print $type,",",$stats->{$type},$/;
+}
+print "Total: ",$stats->{'total'};
+print "\n";
+exit 0;
+
+__END__
+
